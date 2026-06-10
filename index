@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; display: flex; justify-content: center; padding: 20px; background: #f4f7f6; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 380px; }
+        h2 { margin: 0 0 20px 0; color: #2c3e50; font-size: 1.4rem; text-align: center; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; color: #7f8c8d; margin-bottom: 5px; font-weight: 600; }
+        input, select { width: 100%; padding: 12px; border: 2px solid #dfe6e9; border-radius: 10px; box-sizing: border-box; font-size: 1rem; outline: none; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: #3498db; }
+        .result-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .result-box { background: #ebf5fb; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #d6eaf8; }
+        .result-box.metric { background: #f0fdf4; border-color: #dcfce7; }
+        .fraction { font-size: 1.5rem; font-weight: 800; color: #2980b9; margin-top: 5px; }
+        .mm-val { font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-top: 5px; }
+        .unit { font-size: 0.9rem; font-weight: 400; color: #666; }
+		.result-box.warn {background: #fff1f2; border-color: #fecaca; }
+		.result-box.warn .fraction {color: #dc2626; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Fraction & Metric</h2>
+	
+	<div class="input-group">
+		<label>Decimal Inches</label>
+		<input type="number" id="inchInput" step="any" placeholder="e.g. 0.625" oninput="syncFromInches()">
+	</div>
+
+	<div class="input-group">
+		<label>Millimeters</label>
+		<input type="number" id="mmInput" step="any" placeholder="e.g. 15.875" oninput="syncFromMM()">
+	</div>
+	
+	<div class="input-group">
+		<label>Tolerance Threshold (inches)</label>
+		<input type="number" id="tolLimit" step="0.0001" value="0.010" oninput="convert()">
+	</div>
+
+    <div class="input-group">
+        <label>Round Fraction to...</label>
+        <select id="denomSelect" onchange="toggleCustom()">
+            <option value="2">1/2</option>
+            <option value="4">1/4</option>
+            <option value="8">1/8</option>
+            <option value="16" selected>1/16</option>
+            <option value="32">1/32</option>
+            <option value="64">1/64</option>
+            <option value="custom">Custom</option>
+        </select>
+    </div>
+
+    <div id="customGroup" class="input-group" style="display:none;">
+        <label>Custom Denominator</label>
+        <input type="number" id="customDenom" value="10" oninput="convert()">
+    </div>
+	
+    <div class="result-container">
+		<div class="result-box">
+			<label>Rounded Fraction</label>
+			<div id="output" class="fraction">0</div>
+		</div>
+		
+		<div class="result-box">
+			<label>Tolerance</label>
+			<div id="tolerance" class="fraction">±0.0000"</div>
+		</div>
+	</div>
+
+</div>
+
+<script>
+function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+
+let activeField = null;
+
+function syncFromInches() {
+    if (activeField === "mm") return;
+    activeField = "inch";
+
+    let inches = parseFloat(document.getElementById('inchInput').value);
+    if (isNaN(inches)) {
+        document.getElementById('mmInput').value = "";
+        convert(inches);
+        activeField = null;
+        return;
+    }
+
+    document.getElementById('mmInput').value = (inches * 25.4).toFixed(3);
+    convert(inches);
+    activeField = null;
+}
+
+function syncFromMM() {
+    if (activeField === "inch") return;
+    activeField = "mm";
+
+    let mm = parseFloat(document.getElementById('mmInput').value);
+    if (isNaN(mm)) {
+        document.getElementById('inchInput').value = "";
+        convert(NaN);
+        activeField = null;
+        return;
+    }
+
+    let inches = mm / 25.4;
+    document.getElementById('inchInput').value = inches.toFixed(4);
+    convert(inches);
+    activeField = null;
+}
+
+function toggleCustom() {
+    const select = document.getElementById('denomSelect');
+    const customGroup = document.getElementById('customGroup');
+    customGroup.style.display = select.value === 'custom' ? 'block' : 'none';
+    convert();
+}
+
+function decimalToTrueFraction(x) {
+    const precision = 1000000;
+    let numerator = Math.round(x * precision);
+    let denominator = precision;
+    let common = gcd(numerator, denominator);
+    return {
+        num: numerator / common,
+        den: denominator / common
+    };
+}
+
+function bestFraction(x, maxDen = 64) {
+    let bestNum = 0;
+    let bestDen = 1;
+    let bestErr = Infinity;
+
+    for (let den = 1; den <= maxDen; den++) {
+        let num = Math.round(x * den);
+        let err = Math.abs(x - num / den);
+
+        if (err < bestErr) {
+            bestErr = err;
+            bestNum = num;
+            bestDen = den;
+        }
+    }
+
+    let common = gcd(bestNum, bestDen);
+    return {
+        num: bestNum / common,
+        den: bestDen / common
+    };
+}
+
+function convert(inches) {
+    let denomChoice = document.getElementById('denomSelect').value;
+    let tolLimit = parseFloat(document.getElementById('tolLimit').value);
+
+    let targetDenom = denomChoice === 'custom'
+        ? parseInt(document.getElementById('customDenom').value)
+        : parseInt(denomChoice);
+
+    const tolBox = document.getElementById('tolerance').parentElement;
+    tolBox.classList.remove("warn");
+
+    if (isNaN(inches)) {
+        document.getElementById('output').innerHTML = "0";
+        document.getElementById('tolerance').innerHTML = "±0.0000\"";
+        return;
+    }
+
+    // ---- Rounded fraction ----
+    let whole = Math.floor(Math.abs(inches));
+    let decimal = Math.abs(inches) - whole;
+    let sign = inches < 0 ? "-" : "";
+
+    let numerator = Math.round(decimal * targetDenom);
+    let roundedInches = whole;
+
+    if (numerator === targetDenom) {
+        roundedInches = whole + 1;
+        document.getElementById('output').innerHTML = sign + roundedInches;
+    } else if (numerator === 0) {
+        document.getElementById('output').innerHTML =
+            whole === 0 ? "0" : sign + whole;
+    } else {
+        let common = gcd(numerator, targetDenom);
+        let fn = numerator / common;
+        let fd = targetDenom / common;
+
+        roundedInches = whole + fn / fd;
+        let displayWhole = whole > 0 ? whole + " " : "";
+        document.getElementById('output').innerHTML =
+            sign + displayWhole + fn + "/" + fd;
+    }
+
+    // ---- Tolerance ----
+    let tol = Math.abs(inches - roundedInches);
+    document.getElementById('tolerance').innerHTML =
+        "±" + tol.toFixed(4) + "\"";
+
+    if (!isNaN(tolLimit) && tol > tolLimit) {
+        tolBox.classList.add("warn");
+    }
+}
+</script>
+
+
+</body>
+</html>
