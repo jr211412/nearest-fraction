@@ -1,39 +1,176 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="description" content="Decimal equivalent chart for fractions and metric conversions">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Frac↔Metric">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="manifest" href="manifest.json">
     <title>Decimal Equivalent Chart</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: #f4f7f6; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; margin-bottom: 10px; }
-        .nav { text-align: center; margin-bottom: 20px; }
-        .nav a { display: inline-block; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; margin: 5px; }
-        .nav a:hover { background: #2980b9; }
-        .search-box { margin-bottom: 20px; }
-        .search-box input { width: 100%; padding: 12px; border: 2px solid #dfe6e9; border-radius: 10px; font-size: 1rem; box-sizing: border-box; }
-        .search-box input:focus { outline: none; border-color: #3498db; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background: #3498db; color: white; padding: 12px; text-align: left; font-weight: 600; }
-        td { padding: 10px 12px; border-bottom: 1px solid #dfe6e9; }
-        tr:hover { background: #f8f9fa; }
-        tr.highlight { background: #fff3cd; }
-        .fraction { font-weight: 600; color: #2980b9; }
-        .decimal { font-family: 'Courier New', monospace; }
-        .metric-row { background: #f0fdf4; }
-        .metric-row td { border-bottom: 2px solid #dcfce7; }
-        .metric-value { font-weight: 600; color: #16a34a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { height: 100%; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: 0;
+            background: #f4f7f6;
+            min-height: 100vh;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 12px max(12px, env(safe-area-inset-left));
+            border-bottom: 1px solid #dfe6e9;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .nav a { 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px; 
+            background: #3498db; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 600;
+            font-size: 0.95rem;
+            min-height: 44px;
+            min-width: 44px;
+            transition: background 0.2s;
+        }
+        .nav a:active { 
+            background: #2980b9; 
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            padding-left: max(20px, env(safe-area-inset-left));
+            padding-right: max(20px, env(safe-area-inset-right));
+        }
+        h1 { 
+            color: #2c3e50; 
+            text-align: center; 
+            margin-bottom: 8px;
+            font-size: 1.3rem;
+        }
+        .subtitle {
+            text-align: center; 
+            color: #7f8c8d; 
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .search-box { 
+            margin: 20px 0;
+        }
+        .search-box input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #dfe6e9; 
+            border-radius: 10px; 
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .search-box input:focus { 
+            outline: none; 
+            border-color: #3498db; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 16px; 
+        }
+        th { 
+            background: #3498db; 
+            color: white; 
+            padding: 12px; 
+            text-align: left; 
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        td { 
+            padding: 12px; 
+            border-bottom: 1px solid #dfe6e9;
+            font-size: 0.95rem;
+        }
+        tr:hover { 
+            background: #f8f9fa; 
+        }
+        tr.highlight { 
+            background: #fff3cd;
+            box-shadow: inset 0 0 0 2px #ffc107;
+        }
+        .fraction { 
+            font-weight: 600; 
+            color: #2980b9; 
+        }
+        .decimal { 
+            font-family: 'Courier New', monospace; 
+        }
+        .metric-row { 
+            background: #f0fdf4; 
+        }
+        .metric-row td { 
+            border-bottom: 2px solid #dcfce7; 
+        }
+        .metric-value { 
+            font-weight: 600; 
+            color: #16a34a; 
+        }
+        @media (max-width: 600px) {
+            .sticky-header {
+                padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 8px max(8px, env(safe-area-inset-left));
+            }
+            .nav a {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+            .container {
+                padding: 12px;
+                padding-top: max(12px, env(safe-area-inset-top));
+                padding-bottom: max(12px, env(safe-area-inset-bottom));
+                padding-left: max(12px, env(safe-area-inset-left));
+                padding-right: max(12px, env(safe-area-inset-right));
+            }
+            h1 {
+                font-size: 1.1rem;
+                margin-bottom: 4px;
+            }
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 16px;
+            }
+            th, td {
+                padding: 10px 8px;
+                font-size: 0.85rem;
+            }
+            .search-box input {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Decimal Equivalent Chart (1/64ths + Metric)</h1>
-    <p style="text-align: center; color: #7f8c8d; margin-bottom: 20px;">Quick reference for fraction to decimal conversions</p>
-    
+<div class="sticky-header">
     <div class="nav">
-        <a href="index.html">← Back to Calculator</a>
+        <a href="index.html">← Calculator</a>
     </div>
+</div>
+
+<div class="container">
+    <h1>Decimal Equivalent Chart</h1>
+    <p class="subtitle">1/64ths + Metric Quick Reference</p>
     
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search by decimal value (e.g., 0.625)" oninput="searchTable()">
@@ -218,7 +355,7 @@ function searchTable() {
     
     if (closestRow) {
         closestRow.classList.add('highlight');
-        closestRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        closestRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
 
@@ -237,6 +374,13 @@ const params = new URLSearchParams(window.location.search);
 if (params.has('value')) {
     const value = parseFloat(params.get('value'));
     setTimeout(() => autoScrollToValue(value), 100);
+}
+
+// Register service worker for offline support
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+        console.log('Service Worker registration failed:', err);
+    });
 }
 </script>
 
