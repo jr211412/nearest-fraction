@@ -36,7 +36,7 @@
     </div>
     
     <div class="search-box">
-        <input type="number" id="searchInput" step="any" placeholder="Search by decimal value (e.g., 0.625)" oninput="searchTable()">
+        <input type="text" id="searchInput" placeholder="Search by decimal value (e.g., 0.625)" oninput="searchTable()">
     </div>
     
     <table id="chartTable">
@@ -202,17 +202,20 @@ function searchTable() {
     
     if (isNaN(searchValue)) return;
     
-    // Find closest match
-    let closestRow = null;
+    // Find closest match by comparing decimal values
+    let closestIndex = 0;
     let closestDiff = Infinity;
     
-    fractionData.forEach((item) => {
+    fractionData.forEach((item, index) => {
         const diff = Math.abs(item.decimal - searchValue);
         if (diff < closestDiff) {
             closestDiff = diff;
-            closestRow = document.getElementById(`row-${item.num}-${item.den}`);
+            closestIndex = index;
         }
     });
+    
+    const closestItem = fractionData[closestIndex];
+    const closestRow = document.getElementById(`row-${closestItem.num}-${closestItem.den}`);
     
     if (closestRow) {
         closestRow.classList.add('highlight');
