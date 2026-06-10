@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decimal Equivalent Chart</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: #f4f7f6; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 10px; }
+        .nav { text-align: center; margin-bottom: 20px; }
+        .nav a { display: inline-block; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; margin: 5px; }
+        .nav a:hover { background: #2980b9; }
+        .search-box { margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 12px; border: 2px solid #dfe6e9; border-radius: 10px; font-size: 1rem; box-sizing: border-box; }
+        .search-box input:focus { outline: none; border-color: #3498db; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #3498db; color: white; padding: 12px; text-align: left; font-weight: 600; }
+        td { padding: 10px 12px; border-bottom: 1px solid #dfe6e9; }
+        tr:hover { background: #f8f9fa; }
+        tr.highlight { background: #fff3cd; }
+        .fraction { font-weight: 600; color: #2980b9; }
+        .decimal { font-family: 'Courier New', monospace; }
+        .section-header { background: #ecf0f1; font-weight: 600; color: #2c3e50; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Decimal Equivalent Chart</h1>
+    <p style="text-align: center; color: #7f8c8d; margin-bottom: 20px;">Quick reference for fraction to decimal conversions</p>
+    
+    <div class="nav">
+        <a href="index.html">← Back to Calculator</a>
+    </div>
+    
+    <div class="search-box">
+        <input type="number" id="searchInput" step="any" placeholder="Search by decimal value (e.g., 0.625)" oninput="searchTable()">
+    </div>
+    
+    <table id="chartTable">
+        <thead>
+            <tr>
+                <th>Fraction</th>
+                <th>Decimal</th>
+                <th>Millimeters</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+</div>
+
+<script>
+// Fraction data organized by denominator
+const fractionData = [
+    // Halves
+    { num: 0, den: 2, decimal: 0, mm: 0, label: '0' },
+    { num: 1, den: 2, decimal: 0.5, mm: 12.7 },
+    { num: 2, den: 2, decimal: 1, mm: 25.4, label: '1' },
+    
+    // Quarters
+    { num: 0, den: 4, decimal: 0, mm: 0, label: '0' },
+    { num: 1, den: 4, decimal: 0.25, mm: 6.35 },
+    { num: 2, den: 4, decimal: 0.5, mm: 12.7 },
+    { num: 3, den: 4, decimal: 0.75, mm: 19.05 },
+    { num: 4, den: 4, decimal: 1, mm: 25.4, label: '1' },
+    
+    // Eighths
+    { num: 0, den: 8, decimal: 0, mm: 0, label: '0' },
+    { num: 1, den: 8, decimal: 0.125, mm: 3.175 },
+    { num: 2, den: 8, decimal: 0.25, mm: 6.35 },
+    { num: 3, den: 8, decimal: 0.375, mm: 9.525 },
+    { num: 4, den: 8, decimal: 0.5, mm: 12.7 },
+    { num: 5, den: 8, decimal: 0.625, mm: 15.875 },
+    { num: 6, den: 8, decimal: 0.75, mm: 19.05 },
+    { num: 7, den: 8, decimal: 0.875, mm: 22.225 },
+    { num: 8, den: 8, decimal: 1, mm: 25.4, label: '1' },
+    
+    // Sixteenths
+    { num: 0, den: 16, decimal: 0, mm: 0, label: '0' },
+    { num: 1, den: 16, decimal: 0.0625, mm: 1.5875 },
+    { num: 2, den: 16, decimal: 0.125, mm: 3.175 },
+    { num: 3, den: 16, decimal: 0.1875, mm: 4.7625 },
+    { num: 4, den: 16, decimal: 0.25, mm: 6.35 },
+    { num: 5, den: 16, decimal: 0.3125, mm: 7.9375 },
+    { num: 6, den: 16, decimal: 0.375, mm: 9.525 },
+    { num: 7, den: 16, decimal: 0.4375, mm: 11.1125 },
+    { num: 8, den: 16, decimal: 0.5, mm: 12.7 },
+    { num: 9, den: 16, decimal: 0.5625, mm: 14.2875 },
+    { num: 10, den: 16, decimal: 0.625, mm: 15.875 },
+    { num: 11, den: 16, decimal: 0.6875, mm: 17.4625 },
+    { num: 12, den: 16, decimal: 0.75, mm: 19.05 },
+    { num: 13, den: 16, decimal: 0.8125, mm: 20.6375 },
+    { num: 14, den: 16, decimal: 0.875, mm: 22.225 },
+    { num: 15, den: 16, decimal: 0.9375, mm: 23.8125 },
+    { num: 16, den: 16, decimal: 1, mm: 25.4, label: '1' },
+    
+    // Thirty-seconds
+    { num: 0, den: 32, decimal: 0, mm: 0, label: '0' },
+    { num: 1, den: 32, decimal: 0.03125, mm: 0.79375 },
+    { num: 2, den: 32, decimal: 0.0625, mm: 1.5875 },
+    { num: 3, den: 32, decimal: 0.09375, mm: 2.38125 },
+    { num: 4, den: 32, decimal: 0.125, mm: 3.175 },
+    { num: 5, den: 32, decimal: 0.15625, mm: 3.96875 },
+    { num: 6, den: 32, decimal: 0.1875, mm: 4.7625 },
+    { num: 7, den: 32, decimal: 0.21875, mm: 5.55625 },
+    { num: 8, den: 32, decimal: 0.25, mm: 6.35 },
+    { num: 9, den: 32, decimal: 0.28125, mm: 7.14375 },
+    { num: 10, den: 32, decimal: 0.3125, mm: 7.9375 },
+    { num: 11, den: 32, decimal: 0.34375, mm: 8.73125 },
+    { num: 12, den: 32, decimal: 0.375, mm: 9.525 },
+    { num: 13, den: 32, decimal: 0.40625, mm: 10.31875 },
+    { num: 14, den: 32, decimal: 0.4375, mm: 11.1125 },
+    { num: 15, den: 32, decimal: 0.46875, mm: 11.90625 },
+    { num: 16, den: 32, decimal: 0.5, mm: 12.7 },
+    { num: 17, den: 32, decimal: 0.53125, mm: 13.49375 },
+    { num: 18, den: 32, decimal: 0.5625, mm: 14.2875 },
+    { num: 19, den: 32, decimal: 0.59375, mm: 15.08125 },
+    { num: 20, den: 32, decimal: 0.625, mm: 15.875 },
+    { num: 21, den: 32, decimal: 0.65625, mm: 16.66875 },
+    { num: 22, den: 32, decimal: 0.6875, mm: 17.4625 },
+    { num: 23, den: 32, decimal: 0.71875, mm: 18.25625 },
+    { num: 24, den: 32, decimal: 0.75, mm: 19.05 },
+    { num: 25, den: 32, decimal: 0.78125, mm: 19.84375 },
+    { num: 26, den: 32, decimal: 0.8125, mm: 20.6375 },
+    { num: 27, den: 32, decimal: 0.84375, mm: 21.43125 },
+    { num: 28, den: 32, decimal: 0.875, mm: 22.225 },
+    { num: 29, den: 32, decimal: 0.90625, mm: 23.01875 },
+    { num: 30, den: 32, decimal: 0.9375, mm: 23.8125 },
+    { num: 31, den: 32, decimal: 0.96875, mm: 24.60625 },
+    { num: 32, den: 32, decimal: 1, mm: 25.4, label: '1' },
+    
+    // Sixty-fourths
+    { num: 0, den: 64, decimal: 0, mm: 0, label: '0' },
+    { num: 1, den: 64, decimal: 0.015625, mm: 0.396875 },
+    { num: 2, den: 64, decimal: 0.03125, mm: 0.79375 },
+    { num: 3, den: 64, decimal: 0.046875, mm: 1.190625 },
+    { num: 4, den: 64, decimal: 0.0625, mm: 1.5875 },
+    { num: 5, den: 64, decimal: 0.078125, mm: 1.984375 },
+    { num: 6, den: 64, decimal: 0.09375, mm: 2.38125 },
+    { num: 7, den: 64, decimal: 0.109375, mm: 2.778125 },
+    { num: 8, den: 64, decimal: 0.125, mm: 3.175 },
+    { num: 9, den: 64, decimal: 0.140625, mm: 3.571875 },
+    { num: 10, den: 64, decimal: 0.15625, mm: 3.96875 },
+    { num: 11, den: 64, decimal: 0.171875, mm: 4.365625 },
+    { num: 12, den: 64, decimal: 0.1875, mm: 4.7625 },
+    { num: 13, den: 64, decimal: 0.203125, mm: 5.159375 },
+    { num: 14, den: 64, decimal: 0.21875, mm: 5.55625 },
+    { num: 15, den: 64, decimal: 0.234375, mm: 5.953125 },
+    { num: 16, den: 64, decimal: 0.25, mm: 6.35 },
+    { num: 17, den: 64, decimal: 0.265625, mm: 6.746875 },
+    { num: 18, den: 64, decimal: 0.28125, mm: 7.14375 },
+    { num: 19, den: 64, decimal: 0.296875, mm: 7.540625 },
+    { num: 20, den: 64, decimal: 0.3125, mm: 7.9375 },
+    { num: 21, den: 64, decimal: 0.328125, mm: 8.334375 },
+    { num: 22, den: 64, decimal: 0.34375, mm: 8.73125 },
+    { num: 23, den: 64, decimal: 0.359375, mm: 9.128125 },
+    { num: 24, den: 64, decimal: 0.375, mm: 9.525 },
+    { num: 25, den: 64, decimal: 0.390625, mm: 9.921875 },
+    { num: 26, den: 64, decimal: 0.40625, mm: 10.31875 },
+    { num: 27, den: 64, decimal: 0.421875, mm: 10.715625 },
+    { num: 28, den: 64, decimal: 0.4375, mm: 11.1125 },
+    { num: 29, den: 64, decimal: 0.453125, mm: 11.509375 },
+    { num: 30, den: 64, decimal: 0.46875, mm: 11.90625 },
+    { num: 31, den: 64, decimal: 0.484375, mm: 12.303125 },
+    { num: 32, den: 64, decimal: 0.5, mm: 12.7 },
+    { num: 33, den: 64, decimal: 0.515625, mm: 13.096875 },
+    { num: 34, den: 64, decimal: 0.53125, mm: 13.49375 },
+    { num: 35, den: 64, decimal: 0.546875, mm: 13.890625 },
+    { num: 36, den: 64, decimal: 0.5625, mm: 14.2875 },
+    { num: 37, den: 64, decimal: 0.578125, mm: 14.684375 },
+    { num: 38, den: 64, decimal: 0.59375, mm: 15.08125 },
+    { num: 39, den: 64, decimal: 0.609375, mm: 15.478125 },
+    { num: 40, den: 64, decimal: 0.625, mm: 15.875 },
+    { num: 41, den: 64, decimal: 0.640625, mm: 16.271875 },
+    { num: 42, den: 64, decimal: 0.65625, mm: 16.66875 },
+    { num: 43, den: 64, decimal: 0.671875, mm: 17.065625 },
+    { num: 44, den: 64, decimal: 0.6875, mm: 17.4625 },
+    { num: 45, den: 64, decimal: 0.703125, mm: 17.859375 },
+    { num: 46, den: 64, decimal: 0.71875, mm: 18.25625 },
+    { num: 47, den: 64, decimal: 0.734375, mm: 18.653125 },
+    { num: 48, den: 64, decimal: 0.75, mm: 19.05 },
+    { num: 49, den: 64, decimal: 0.765625, mm: 19.446875 },
+    { num: 50, den: 64, decimal: 0.78125, mm: 19.84375 },
+    { num: 51, den: 64, decimal: 0.796875, mm: 20.240625 },
+    { num: 52, den: 64, decimal: 0.8125, mm: 20.6375 },
+    { num: 53, den: 64, decimal: 0.828125, mm: 21.034375 },
+    { num: 54, den: 64, decimal: 0.84375, mm: 21.43125 },
+    { num: 55, den: 64, decimal: 0.859375, mm: 21.828125 },
+    { num: 56, den: 64, decimal: 0.875, mm: 22.225 },
+    { num: 57, den: 64, decimal: 0.890625, mm: 22.621875 },
+    { num: 58, den: 64, decimal: 0.90625, mm: 23.01875 },
+    { num: 59, den: 64, decimal: 0.921875, mm: 23.415625 },
+    { num: 60, den: 64, decimal: 0.9375, mm: 23.8125 },
+    { num: 61, den: 64, decimal: 0.953125, mm: 24.209375 },
+    { num: 62, den: 64, decimal: 0.96875, mm: 24.60625 },
+    { num: 63, den: 64, decimal: 0.984375, mm: 24.803125 },
+    { num: 64, den: 64, decimal: 1, mm: 25.4, label: '1' },
+];
+
+function gcd(a, b) { return b ? gcd(b, a % b) : a; }
+
+function formatFraction(num, den) {
+    if (num === 0) return "0";
+    if (num === den) return "1";
+    let common = gcd(num, den);
+    num /= common;
+    den /= common;
+    return `${num}/${den}`;
+}
+
+function populateTable() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    
+    let currentDen = 0;
+    fractionData.forEach((item, index) => {
+        if (item.den !== currentDen) {
+            // Add section header
+            currentDen = item.den;
+            const headerRow = document.createElement('tr');
+            headerRow.className = 'section-header';
+            headerRow.innerHTML = `<td colspan="3">Fraction (1/${currentDen})</td>`;
+            tbody.appendChild(headerRow);
+        }
+        
+        const row = document.createElement('tr');
+        row.id = `row-${item.num}-${item.den}`;
+        row.innerHTML = `
+            <td class="fraction">${formatFraction(item.num, item.den)}</td>
+            <td class="decimal">${item.decimal.toFixed(6).replace(/0+$/, '').replace(/\.$/, '') || '0'}</td>
+            <td>${item.mm.toFixed(3)}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function searchTable() {
+    const searchValue = parseFloat(document.getElementById('searchInput').value);
+    
+    // Remove previous highlights
+    document.querySelectorAll('tr.highlight').forEach(row => row.classList.remove('highlight'));
+    
+    if (isNaN(searchValue)) return;
+    
+    // Find closest match
+    let closestRow = null;
+    let closestDiff = Infinity;
+    
+    fractionData.forEach((item, index) => {
+        const diff = Math.abs(item.decimal - searchValue);
+        if (diff < closestDiff) {
+            closestDiff = diff;
+            closestRow = document.getElementById(`row-${item.num}-${item.den}`);
+        }
+    });
+    
+    if (closestRow) {
+        closestRow.classList.add('highlight');
+        closestRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function autoScrollToValue(decimalValue) {
+    if (isNaN(decimalValue)) return;
+    
+    document.getElementById('searchInput').value = decimalValue.toFixed(4);
+    searchTable();
+}
+
+// Populate table on page load
+document.addEventListener('DOMContentLoaded', populateTable);
+
+// Check for auto-scroll parameter
+const params = new URLSearchParams(window.location.search);
+if (params.has('value')) {
+    const value = parseFloat(params.get('value'));
+    setTimeout(() => autoScrollToValue(value), 100);
+}
+</script>
+
+</body>
+</html>
