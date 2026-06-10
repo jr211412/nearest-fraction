@@ -20,12 +20,15 @@
         tr.highlight { background: #fff3cd; }
         .fraction { font-weight: 600; color: #2980b9; }
         .decimal { font-family: 'Courier New', monospace; }
+        .metric-row { background: #f0fdf4; }
+        .metric-row td { border-bottom: 2px solid #dcfce7; }
+        .metric-value { font-weight: 600; color: #16a34a; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Decimal Equivalent Chart (1/64ths)</h1>
+    <h1>Decimal Equivalent Chart (1/64ths + Metric)</h1>
     <p style="text-align: center; color: #7f8c8d; margin-bottom: 20px;">Quick reference for fraction to decimal conversions</p>
     
     <div class="nav">
@@ -50,73 +53,99 @@
 </div>
 
 <script>
-// Fraction data for 64ths
+// Fraction data for 64ths with metric values mixed in
 const fractionData = [
-    { num: 0, den: 64, decimal: 0, mm: 0 },
-    { num: 1, den: 64, decimal: 0.015625, mm: 0.396875 },
-    { num: 2, den: 64, decimal: 0.03125, mm: 0.79375 },
-    { num: 3, den: 64, decimal: 0.046875, mm: 1.190625 },
-    { num: 4, den: 64, decimal: 0.0625, mm: 1.5875 },
-    { num: 5, den: 64, decimal: 0.078125, mm: 1.984375 },
-    { num: 6, den: 64, decimal: 0.09375, mm: 2.38125 },
-    { num: 7, den: 64, decimal: 0.109375, mm: 2.778125 },
-    { num: 8, den: 64, decimal: 0.125, mm: 3.175 },
-    { num: 9, den: 64, decimal: 0.140625, mm: 3.571875 },
-    { num: 10, den: 64, decimal: 0.15625, mm: 3.96875 },
-    { num: 11, den: 64, decimal: 0.171875, mm: 4.365625 },
-    { num: 12, den: 64, decimal: 0.1875, mm: 4.7625 },
-    { num: 13, den: 64, decimal: 0.203125, mm: 5.159375 },
-    { num: 14, den: 64, decimal: 0.21875, mm: 5.55625 },
-    { num: 15, den: 64, decimal: 0.234375, mm: 5.953125 },
-    { num: 16, den: 64, decimal: 0.25, mm: 6.35 },
-    { num: 17, den: 64, decimal: 0.265625, mm: 6.746875 },
-    { num: 18, den: 64, decimal: 0.28125, mm: 7.14375 },
-    { num: 19, den: 64, decimal: 0.296875, mm: 7.540625 },
-    { num: 20, den: 64, decimal: 0.3125, mm: 7.9375 },
-    { num: 21, den: 64, decimal: 0.328125, mm: 8.334375 },
-    { num: 22, den: 64, decimal: 0.34375, mm: 8.73125 },
-    { num: 23, den: 64, decimal: 0.359375, mm: 9.128125 },
-    { num: 24, den: 64, decimal: 0.375, mm: 9.525 },
-    { num: 25, den: 64, decimal: 0.390625, mm: 9.921875 },
-    { num: 26, den: 64, decimal: 0.40625, mm: 10.31875 },
-    { num: 27, den: 64, decimal: 0.421875, mm: 10.715625 },
-    { num: 28, den: 64, decimal: 0.4375, mm: 11.1125 },
-    { num: 29, den: 64, decimal: 0.453125, mm: 11.509375 },
-    { num: 30, den: 64, decimal: 0.46875, mm: 11.90625 },
-    { num: 31, den: 64, decimal: 0.484375, mm: 12.303125 },
-    { num: 32, den: 64, decimal: 0.5, mm: 12.7 },
-    { num: 33, den: 64, decimal: 0.515625, mm: 13.096875 },
-    { num: 34, den: 64, decimal: 0.53125, mm: 13.49375 },
-    { num: 35, den: 64, decimal: 0.546875, mm: 13.890625 },
-    { num: 36, den: 64, decimal: 0.5625, mm: 14.2875 },
-    { num: 37, den: 64, decimal: 0.578125, mm: 14.684375 },
-    { num: 38, den: 64, decimal: 0.59375, mm: 15.08125 },
-    { num: 39, den: 64, decimal: 0.609375, mm: 15.478125 },
-    { num: 40, den: 64, decimal: 0.625, mm: 15.875 },
-    { num: 41, den: 64, decimal: 0.640625, mm: 16.271875 },
-    { num: 42, den: 64, decimal: 0.65625, mm: 16.66875 },
-    { num: 43, den: 64, decimal: 0.671875, mm: 17.065625 },
-    { num: 44, den: 64, decimal: 0.6875, mm: 17.4625 },
-    { num: 45, den: 64, decimal: 0.703125, mm: 17.859375 },
-    { num: 46, den: 64, decimal: 0.71875, mm: 18.25625 },
-    { num: 47, den: 64, decimal: 0.734375, mm: 18.653125 },
-    { num: 48, den: 64, decimal: 0.75, mm: 19.05 },
-    { num: 49, den: 64, decimal: 0.765625, mm: 19.446875 },
-    { num: 50, den: 64, decimal: 0.78125, mm: 19.84375 },
-    { num: 51, den: 64, decimal: 0.796875, mm: 20.240625 },
-    { num: 52, den: 64, decimal: 0.8125, mm: 20.6375 },
-    { num: 53, den: 64, decimal: 0.828125, mm: 21.034375 },
-    { num: 54, den: 64, decimal: 0.84375, mm: 21.43125 },
-    { num: 55, den: 64, decimal: 0.859375, mm: 21.828125 },
-    { num: 56, den: 64, decimal: 0.875, mm: 22.225 },
-    { num: 57, den: 64, decimal: 0.890625, mm: 22.621875 },
-    { num: 58, den: 64, decimal: 0.90625, mm: 23.01875 },
-    { num: 59, den: 64, decimal: 0.921875, mm: 23.415625 },
-    { num: 60, den: 64, decimal: 0.9375, mm: 23.8125 },
-    { num: 61, den: 64, decimal: 0.953125, mm: 24.209375 },
-    { num: 62, den: 64, decimal: 0.96875, mm: 24.60625 },
-    { num: 63, den: 64, decimal: 0.984375, mm: 24.803125 },
-    { num: 64, den: 64, decimal: 1, mm: 25.4 },
+    { num: 0, den: 64, decimal: 0, mm: 0, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0, mm: 0.5, type: 'metric', label: '0.5 mm' },
+    { num: 1, den: 64, decimal: 0.015625, mm: 0.396875, type: 'fraction' },
+    { num: 2, den: 64, decimal: 0.03125, mm: 0.79375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.03937, mm: 1, type: 'metric', label: '1 mm' },
+    { num: 3, den: 64, decimal: 0.046875, mm: 1.190625, type: 'fraction' },
+    { num: 4, den: 64, decimal: 0.0625, mm: 1.5875, type: 'fraction' },
+    { num: 5, den: 64, decimal: 0.078125, mm: 1.984375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.07874, mm: 2, type: 'metric', label: '2 mm' },
+    { num: 6, den: 64, decimal: 0.09375, mm: 2.38125, type: 'fraction' },
+    { num: 7, den: 64, decimal: 0.109375, mm: 2.778125, type: 'fraction' },
+    { num: 8, den: 64, decimal: 0.125, mm: 3.175, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.11811, mm: 3, type: 'metric', label: '3 mm' },
+    { num: 9, den: 64, decimal: 0.140625, mm: 3.571875, type: 'fraction' },
+    { num: 10, den: 64, decimal: 0.15625, mm: 3.96875, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.15748, mm: 4, type: 'metric', label: '4 mm' },
+    { num: 11, den: 64, decimal: 0.171875, mm: 4.365625, type: 'fraction' },
+    { num: 12, den: 64, decimal: 0.1875, mm: 4.7625, type: 'fraction' },
+    { num: 13, den: 64, decimal: 0.203125, mm: 5.159375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.19685, mm: 5, type: 'metric', label: '5 mm' },
+    { num: 14, den: 64, decimal: 0.21875, mm: 5.55625, type: 'fraction' },
+    { num: 15, den: 64, decimal: 0.234375, mm: 5.953125, type: 'fraction' },
+    { num: 16, den: 64, decimal: 0.25, mm: 6.35, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.23622, mm: 6, type: 'metric', label: '6 mm' },
+    { num: 17, den: 64, decimal: 0.265625, mm: 6.746875, type: 'fraction' },
+    { num: 18, den: 64, decimal: 0.28125, mm: 7.14375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.27559, mm: 7, type: 'metric', label: '7 mm' },
+    { num: 19, den: 64, decimal: 0.296875, mm: 7.540625, type: 'fraction' },
+    { num: 20, den: 64, decimal: 0.3125, mm: 7.9375, type: 'fraction' },
+    { num: 21, den: 64, decimal: 0.328125, mm: 8.334375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.31496, mm: 8, type: 'metric', label: '8 mm' },
+    { num: 22, den: 64, decimal: 0.34375, mm: 8.73125, type: 'fraction' },
+    { num: 23, den: 64, decimal: 0.359375, mm: 9.128125, type: 'fraction' },
+    { num: 24, den: 64, decimal: 0.375, mm: 9.525, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.35433, mm: 9, type: 'metric', label: '9 mm' },
+    { num: 25, den: 64, decimal: 0.390625, mm: 9.921875, type: 'fraction' },
+    { num: 26, den: 64, decimal: 0.40625, mm: 10.31875, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.3937, mm: 10, type: 'metric', label: '10 mm' },
+    { num: 27, den: 64, decimal: 0.421875, mm: 10.715625, type: 'fraction' },
+    { num: 28, den: 64, decimal: 0.4375, mm: 11.1125, type: 'fraction' },
+    { num: 29, den: 64, decimal: 0.453125, mm: 11.509375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.43307, mm: 11, type: 'metric', label: '11 mm' },
+    { num: 30, den: 64, decimal: 0.46875, mm: 11.90625, type: 'fraction' },
+    { num: 31, den: 64, decimal: 0.484375, mm: 12.303125, type: 'fraction' },
+    { num: 32, den: 64, decimal: 0.5, mm: 12.7, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.47244, mm: 12, type: 'metric', label: '12 mm' },
+    { num: 33, den: 64, decimal: 0.515625, mm: 13.096875, type: 'fraction' },
+    { num: 34, den: 64, decimal: 0.53125, mm: 13.49375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.51181, mm: 13, type: 'metric', label: '13 mm' },
+    { num: 35, den: 64, decimal: 0.546875, mm: 13.890625, type: 'fraction' },
+    { num: 36, den: 64, decimal: 0.5625, mm: 14.2875, type: 'fraction' },
+    { num: 37, den: 64, decimal: 0.578125, mm: 14.684375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.55118, mm: 14, type: 'metric', label: '14 mm' },
+    { num: 38, den: 64, decimal: 0.59375, mm: 15.08125, type: 'fraction' },
+    { num: 39, den: 64, decimal: 0.609375, mm: 15.478125, type: 'fraction' },
+    { num: 40, den: 64, decimal: 0.625, mm: 15.875, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.59055, mm: 15, type: 'metric', label: '15 mm' },
+    { num: 41, den: 64, decimal: 0.640625, mm: 16.271875, type: 'fraction' },
+    { num: 42, den: 64, decimal: 0.65625, mm: 16.66875, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.62992, mm: 16, type: 'metric', label: '16 mm' },
+    { num: 43, den: 64, decimal: 0.671875, mm: 17.065625, type: 'fraction' },
+    { num: 44, den: 64, decimal: 0.6875, mm: 17.4625, type: 'fraction' },
+    { num: 45, den: 64, decimal: 0.703125, mm: 17.859375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.66929, mm: 17, type: 'metric', label: '17 mm' },
+    { num: 46, den: 64, decimal: 0.71875, mm: 18.25625, type: 'fraction' },
+    { num: 47, den: 64, decimal: 0.734375, mm: 18.653125, type: 'fraction' },
+    { num: 48, den: 64, decimal: 0.75, mm: 19.05, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.70866, mm: 18, type: 'metric', label: '18 mm' },
+    { num: 49, den: 64, decimal: 0.765625, mm: 19.446875, type: 'fraction' },
+    { num: 50, den: 64, decimal: 0.78125, mm: 19.84375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.74803, mm: 19, type: 'metric', label: '19 mm' },
+    { num: 51, den: 64, decimal: 0.796875, mm: 20.240625, type: 'fraction' },
+    { num: 52, den: 64, decimal: 0.8125, mm: 20.6375, type: 'fraction' },
+    { num: 53, den: 64, decimal: 0.828125, mm: 21.034375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.7874, mm: 20, type: 'metric', label: '20 mm' },
+    { num: 54, den: 64, decimal: 0.84375, mm: 21.43125, type: 'fraction' },
+    { num: 55, den: 64, decimal: 0.859375, mm: 21.828125, type: 'fraction' },
+    { num: 56, den: 64, decimal: 0.875, mm: 22.225, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.82677, mm: 21, type: 'metric', label: '21 mm' },
+    { num: 57, den: 64, decimal: 0.890625, mm: 22.621875, type: 'fraction' },
+    { num: 58, den: 64, decimal: 0.90625, mm: 23.01875, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.86614, mm: 22, type: 'metric', label: '22 mm' },
+    { num: 59, den: 64, decimal: 0.921875, mm: 23.415625, type: 'fraction' },
+    { num: 60, den: 64, decimal: 0.9375, mm: 23.8125, type: 'fraction' },
+    { num: 61, den: 64, decimal: 0.953125, mm: 24.209375, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.90551, mm: 23, type: 'metric', label: '23 mm' },
+    { num: 62, den: 64, decimal: 0.96875, mm: 24.60625, type: 'fraction' },
+    { num: 63, den: 64, decimal: 0.984375, mm: 24.803125, type: 'fraction' },
+    { num: 64, den: 64, decimal: 1, mm: 25.4, type: 'fraction' },
+    { num: 0, den: 0, decimal: 0.94488, mm: 24, type: 'metric', label: '24 mm' },
+    { num: 0, den: 0, decimal: 0.98425, mm: 25, type: 'metric', label: '25 mm' },
 ];
 
 function gcd(a, b) { return b ? gcd(b, a % b) : a; }
@@ -137,11 +166,21 @@ function populateTable() {
     fractionData.forEach((item) => {
         const row = document.createElement('tr');
         row.id = `row-${item.num}-${item.den}`;
-        row.innerHTML = `
-            <td class="fraction">${formatFraction(item.num, item.den)}</td>
-            <td class="decimal">${item.decimal.toFixed(6).replace(/0+$/, '').replace(/\.$/, '') || '0'}</td>
-            <td>${item.mm.toFixed(3)}</td>
-        `;
+        
+        if (item.type === 'metric') {
+            row.classList.add('metric-row');
+            row.innerHTML = `
+                <td class="metric-value">${item.label}</td>
+                <td class="decimal">${item.decimal.toFixed(5).replace(/0+$/, '').replace(/\.$/, '')}</td>
+                <td class="metric-value">${item.mm}</td>
+            `;
+        } else {
+            row.innerHTML = `
+                <td class="fraction">${formatFraction(item.num, item.den)}</td>
+                <td class="decimal">${item.decimal.toFixed(6).replace(/0+$/, '').replace(/\.$/, '') || '0'}</td>
+                <td>${item.mm.toFixed(3)}</td>
+            `;
+        }
         tbody.appendChild(row);
     });
 }
