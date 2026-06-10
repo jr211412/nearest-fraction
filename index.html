@@ -18,6 +18,9 @@
         .unit { font-size: 0.9rem; font-weight: 400; color: #666; }
 		.result-box.warn {background: #fff1f2; border-color: #fecaca; }
 		.result-box.warn .fraction {color: #dc2626; }
+		.chart-link { display: block; text-align: center; margin-top: 20px; }
+		.chart-link a { display: inline-block; padding: 10px 20px; background: #27ae60; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: background 0.2s; }
+		.chart-link a:hover { background: #229954; }
     </style>
 </head>
 <body>
@@ -68,6 +71,10 @@
 			<label>Tolerance</label>
 			<div id="tolerance" class="fraction">±0.0000"</div>
 		</div>
+	</div>
+
+	<div class="chart-link">
+		<a href="#" onclick="openChart(); return false;">📊 View Decimal Chart</a>
 	</div>
 
 </div>
@@ -206,6 +213,15 @@ function convert(inches) {
 
     if (!isNaN(tolLimit) && tol > tolLimit) {
         tolBox.classList.add("warn");
+    }
+}
+
+function openChart() {
+    let inches = parseFloat(document.getElementById('inchInput').value);
+    if (isNaN(inches)) {
+        window.location.href = 'chart.html';
+    } else {
+        window.location.href = 'chart.html?value=' + inches;
     }
 }
 </script>
