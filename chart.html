@@ -20,13 +20,12 @@
         tr.highlight { background: #fff3cd; }
         .fraction { font-weight: 600; color: #2980b9; }
         .decimal { font-family: 'Courier New', monospace; }
-        .section-header { background: #ecf0f1; font-weight: 600; color: #2c3e50; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Decimal Equivalent Chart</h1>
+    <h1>Decimal Equivalent Chart (1/64ths)</h1>
     <p style="text-align: center; color: #7f8c8d; margin-bottom: 20px;">Quick reference for fraction to decimal conversions</p>
     
     <div class="nav">
@@ -51,87 +50,9 @@
 </div>
 
 <script>
-// Fraction data organized by denominator
+// Fraction data for 64ths
 const fractionData = [
-    // Halves
-    { num: 0, den: 2, decimal: 0, mm: 0, label: '0' },
-    { num: 1, den: 2, decimal: 0.5, mm: 12.7 },
-    { num: 2, den: 2, decimal: 1, mm: 25.4, label: '1' },
-    
-    // Quarters
-    { num: 0, den: 4, decimal: 0, mm: 0, label: '0' },
-    { num: 1, den: 4, decimal: 0.25, mm: 6.35 },
-    { num: 2, den: 4, decimal: 0.5, mm: 12.7 },
-    { num: 3, den: 4, decimal: 0.75, mm: 19.05 },
-    { num: 4, den: 4, decimal: 1, mm: 25.4, label: '1' },
-    
-    // Eighths
-    { num: 0, den: 8, decimal: 0, mm: 0, label: '0' },
-    { num: 1, den: 8, decimal: 0.125, mm: 3.175 },
-    { num: 2, den: 8, decimal: 0.25, mm: 6.35 },
-    { num: 3, den: 8, decimal: 0.375, mm: 9.525 },
-    { num: 4, den: 8, decimal: 0.5, mm: 12.7 },
-    { num: 5, den: 8, decimal: 0.625, mm: 15.875 },
-    { num: 6, den: 8, decimal: 0.75, mm: 19.05 },
-    { num: 7, den: 8, decimal: 0.875, mm: 22.225 },
-    { num: 8, den: 8, decimal: 1, mm: 25.4, label: '1' },
-    
-    // Sixteenths
-    { num: 0, den: 16, decimal: 0, mm: 0, label: '0' },
-    { num: 1, den: 16, decimal: 0.0625, mm: 1.5875 },
-    { num: 2, den: 16, decimal: 0.125, mm: 3.175 },
-    { num: 3, den: 16, decimal: 0.1875, mm: 4.7625 },
-    { num: 4, den: 16, decimal: 0.25, mm: 6.35 },
-    { num: 5, den: 16, decimal: 0.3125, mm: 7.9375 },
-    { num: 6, den: 16, decimal: 0.375, mm: 9.525 },
-    { num: 7, den: 16, decimal: 0.4375, mm: 11.1125 },
-    { num: 8, den: 16, decimal: 0.5, mm: 12.7 },
-    { num: 9, den: 16, decimal: 0.5625, mm: 14.2875 },
-    { num: 10, den: 16, decimal: 0.625, mm: 15.875 },
-    { num: 11, den: 16, decimal: 0.6875, mm: 17.4625 },
-    { num: 12, den: 16, decimal: 0.75, mm: 19.05 },
-    { num: 13, den: 16, decimal: 0.8125, mm: 20.6375 },
-    { num: 14, den: 16, decimal: 0.875, mm: 22.225 },
-    { num: 15, den: 16, decimal: 0.9375, mm: 23.8125 },
-    { num: 16, den: 16, decimal: 1, mm: 25.4, label: '1' },
-    
-    // Thirty-seconds
-    { num: 0, den: 32, decimal: 0, mm: 0, label: '0' },
-    { num: 1, den: 32, decimal: 0.03125, mm: 0.79375 },
-    { num: 2, den: 32, decimal: 0.0625, mm: 1.5875 },
-    { num: 3, den: 32, decimal: 0.09375, mm: 2.38125 },
-    { num: 4, den: 32, decimal: 0.125, mm: 3.175 },
-    { num: 5, den: 32, decimal: 0.15625, mm: 3.96875 },
-    { num: 6, den: 32, decimal: 0.1875, mm: 4.7625 },
-    { num: 7, den: 32, decimal: 0.21875, mm: 5.55625 },
-    { num: 8, den: 32, decimal: 0.25, mm: 6.35 },
-    { num: 9, den: 32, decimal: 0.28125, mm: 7.14375 },
-    { num: 10, den: 32, decimal: 0.3125, mm: 7.9375 },
-    { num: 11, den: 32, decimal: 0.34375, mm: 8.73125 },
-    { num: 12, den: 32, decimal: 0.375, mm: 9.525 },
-    { num: 13, den: 32, decimal: 0.40625, mm: 10.31875 },
-    { num: 14, den: 32, decimal: 0.4375, mm: 11.1125 },
-    { num: 15, den: 32, decimal: 0.46875, mm: 11.90625 },
-    { num: 16, den: 32, decimal: 0.5, mm: 12.7 },
-    { num: 17, den: 32, decimal: 0.53125, mm: 13.49375 },
-    { num: 18, den: 32, decimal: 0.5625, mm: 14.2875 },
-    { num: 19, den: 32, decimal: 0.59375, mm: 15.08125 },
-    { num: 20, den: 32, decimal: 0.625, mm: 15.875 },
-    { num: 21, den: 32, decimal: 0.65625, mm: 16.66875 },
-    { num: 22, den: 32, decimal: 0.6875, mm: 17.4625 },
-    { num: 23, den: 32, decimal: 0.71875, mm: 18.25625 },
-    { num: 24, den: 32, decimal: 0.75, mm: 19.05 },
-    { num: 25, den: 32, decimal: 0.78125, mm: 19.84375 },
-    { num: 26, den: 32, decimal: 0.8125, mm: 20.6375 },
-    { num: 27, den: 32, decimal: 0.84375, mm: 21.43125 },
-    { num: 28, den: 32, decimal: 0.875, mm: 22.225 },
-    { num: 29, den: 32, decimal: 0.90625, mm: 23.01875 },
-    { num: 30, den: 32, decimal: 0.9375, mm: 23.8125 },
-    { num: 31, den: 32, decimal: 0.96875, mm: 24.60625 },
-    { num: 32, den: 32, decimal: 1, mm: 25.4, label: '1' },
-    
-    // Sixty-fourths
-    { num: 0, den: 64, decimal: 0, mm: 0, label: '0' },
+    { num: 0, den: 64, decimal: 0, mm: 0 },
     { num: 1, den: 64, decimal: 0.015625, mm: 0.396875 },
     { num: 2, den: 64, decimal: 0.03125, mm: 0.79375 },
     { num: 3, den: 64, decimal: 0.046875, mm: 1.190625 },
@@ -195,7 +116,7 @@ const fractionData = [
     { num: 61, den: 64, decimal: 0.953125, mm: 24.209375 },
     { num: 62, den: 64, decimal: 0.96875, mm: 24.60625 },
     { num: 63, den: 64, decimal: 0.984375, mm: 24.803125 },
-    { num: 64, den: 64, decimal: 1, mm: 25.4, label: '1' },
+    { num: 64, den: 64, decimal: 1, mm: 25.4 },
 ];
 
 function gcd(a, b) { return b ? gcd(b, a % b) : a; }
@@ -213,17 +134,7 @@ function populateTable() {
     const tbody = document.getElementById('tableBody');
     tbody.innerHTML = '';
     
-    let currentDen = 0;
-    fractionData.forEach((item, index) => {
-        if (item.den !== currentDen) {
-            // Add section header
-            currentDen = item.den;
-            const headerRow = document.createElement('tr');
-            headerRow.className = 'section-header';
-            headerRow.innerHTML = `<td colspan="3">Fraction (1/${currentDen})</td>`;
-            tbody.appendChild(headerRow);
-        }
-        
+    fractionData.forEach((item) => {
         const row = document.createElement('tr');
         row.id = `row-${item.num}-${item.den}`;
         row.innerHTML = `
@@ -247,7 +158,7 @@ function searchTable() {
     let closestRow = null;
     let closestDiff = Infinity;
     
-    fractionData.forEach((item, index) => {
+    fractionData.forEach((item) => {
         const diff = Math.abs(item.decimal - searchValue);
         if (diff < closestDiff) {
             closestDiff = diff;
