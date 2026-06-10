@@ -37,12 +37,12 @@
 	
 	<div class="input-group">
 		<label>Tolerance Threshold (inches)</label>
-		<input type="number" id="tolLimit" step="0.0001" value="0.010" oninput="convert()">
+		<input type="number" id="tolLimit" step="0.0001" value="0.010" oninput="updateAll()">
 	</div>
 
     <div class="input-group">
         <label>Round Fraction to...</label>
-        <select id="denomSelect" onchange="toggleCustom()">
+        <select id="denomSelect" onchange="updateAll()">
             <option value="2">1/2</option>
             <option value="4">1/4</option>
             <option value="8">1/8</option>
@@ -55,7 +55,7 @@
 
     <div id="customGroup" class="input-group" style="display:none;">
         <label>Custom Denominator</label>
-        <input type="number" id="customDenom" value="10" oninput="convert()">
+        <input type="number" id="customDenom" value="10" oninput="updateAll()">
     </div>
 	
     <div class="result-container">
@@ -112,11 +112,15 @@ function syncFromMM() {
     activeField = null;
 }
 
-function toggleCustom() {
+function updateAll() {
     const select = document.getElementById('denomSelect');
     const customGroup = document.getElementById('customGroup');
     customGroup.style.display = select.value === 'custom' ? 'block' : 'none';
-    convert();
+    
+    let inches = parseFloat(document.getElementById('inchInput').value);
+    if (!isNaN(inches)) {
+        convert(inches);
+    }
 }
 
 function decimalToTrueFraction(x) {
